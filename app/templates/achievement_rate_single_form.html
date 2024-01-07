@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="{{ url_for('achievement.achievement_rate_single_form', aid=achievement_fields.aid) }}" method="post">
+    {{ form.hidden_tag() }}
+      {% for field in form %}
+          {% if field.errors %}
+              <div class="alert alert-danger">
+                  {{ field.label }}:
+                  {% for error in field.errors %}
+                     {{ error }}
+                  {% endfor %}
+              </div>
+          {% endif %}
+    {% endfor %}
+<!--   Display-only fields -->
+  <div class="mb-3">
+      <label for="aid" class="form-label">ID</label>
+      <input type="text" class="form-control" id="aid" value="{{ achievement_fields.aid }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="title" class="form-label">Tytuł</label>
+      <input type="text" class="form-control" id="title" value="{{ achievement_fields.title }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="description" class="form-label">Opis</label>
+      <input type="text" class="form-control" id="description" value="{{ achievement_fields.description }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="start_date" class="form-label">Początek</label>
+      <input type="date" class="form-control" id="start_date" value="{{ achievement_fields.start_date }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="end_date" class="form-label">Koniec</label>
+      <input type="date" class="form-control" id="end_date" value="{{ achievement_fields.end_date }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="category_name" class="form-label">Kategoria</label>
+      <input type="text" class="form-control" id="category_name" value="{{ achievement_fields.category.category_name }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="hashtag_name" class="form-label">Hashtag</label>
+      <input type="text" class="form-control" id="hashtag_name" value="{{ achievement_fields.hashtags.hashtag_name }}" readonly disabled>
+  </div>
+  <div class="mb-3">
+      <label for="user_login" class="form-label">Użytkownik</label>
+      <input type="text" class="form-control" id="user_login" value="{{ achievement_fields.user.login }}" readonly disabled>
+  </div>
+
+  <!-- Editable field -->
+  <div class="mb-3">
+      <label for="rating" class="form-label">Ocena (0,0 - 10,0)</label>
+      <input type="number" class="form-control" id="rating" name="rating" step="0.1" min="0.0" max="10.0" value="{{ form.rating }}
+ <!--   " >   -->
+  </div>
+
+  <button type="submit" class="btn btn-primary">Zaakceptuj/Oceń</button>
+</form>
+
+{% endblock %}

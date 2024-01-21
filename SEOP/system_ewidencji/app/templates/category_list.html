@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Lista kategorii</h3>
+  <div class="container">
+      <div class="table-responsive">
+          <table class="table table-striped">
+              <thead>
+                 <tr>
+                     <th scope="col">ID</th>
+                     <th scope="col">Kategoria</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 {% for category in categories %}
+                     <tr>
+                        <td>{{ category.cid }}</td>
+                        <td>{{ category.category_name }}</td>
+                     </tr>
+                 {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  </div>
+
+
+{% endblock %}

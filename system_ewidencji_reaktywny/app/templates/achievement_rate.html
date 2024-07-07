@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista osiągnięć do oceny/akceptacji</h1>
+
+
+<div class="container">
+   <table class="table">
+       <thead>
+           <tr>
+               <th scope="col">ID</th>
+               <th scope="col">Tytuł</th>
+               <th scope="col">Opis</th>
+               <th scope="col">Początek</th>
+               <th scope="col">Koniec</th>
+               <th scope="col">Rating</th>
+               <th scope="col">Status</th>
+               <th scope="col">Kategoria</th>
+               <th scope="col">Hashtag</th>
+               <th scope="col">Użytkownik</th>
+               <th scope="col">Dostępne akcje</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for achievement in achievements %}
+           <tr>
+               <td>{{ achievement.aid }}</td>
+               <td>{{ achievement.title }}</td>
+               <td>{{ achievement.description }}</td>
+               <td>{{ achievement.start_date }}</td>
+               <td>{{ achievement.end_date }}</td>
+               <td>{{ achievement.rating }}</td>
+               <td>{{ achievement.status }}</td>
+               <td>{{ achievement.category_name }}</td>
+               <td>{{ achievement.hashtag_name }}</td>
+               <td>{{ achievement.login }}</td>
+               <td>
+                      <a href="{{ url_for('achievement.achievement_rate_single_form', aid=achievement.aid) }}" class="btn btn-success">Zaakceptuj/Oceń</a>
+                      <a href="{{ url_for('achievement.achievement_rate_helper', aid=achievement.aid, action='reject') }}" class="btn btn-danger">Odrzuć</a>
+                      <a href="{{ url_for('achievement.achievement_send_to_fix_single_form', aid=achievement.aid) }}" class="btn btn-warning">Wyślij do poprawki</a>
+                 </td>
+           </tr>
+           {% endfor %}
+       </tbody>
+   </table>
+</div>
+
+
+{% endblock %}

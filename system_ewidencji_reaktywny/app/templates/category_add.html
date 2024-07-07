@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Dodaj kategorię</h3>
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+      <label for="{{ form.category_name.id }}" class="form-label">{{ form.category_name.label }}</label>
+      {{ form.category_name(class="form-control", id=form.category_name.id) }}
+  </div>
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+
+{% endblock %}

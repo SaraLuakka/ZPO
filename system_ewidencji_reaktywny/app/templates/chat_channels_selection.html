@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Dołacz do kanałów tematycznych</h3>
+<div class="container my-5 py-5 bg-light rounded shadow-sm">
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nazwa czatu</th>
+                    <th scope="col">Dołącz</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chat in chats %}
+                    <tr>
+                        <td id="cid{{ chat.ccid }}">{{ chat.chat_category_name }}</td>
+                        <td><a href="/chat/channel/{{ chat.chat_category_name }}" class="btn btn-primary"><i class="bi bi-chat"></i> Dołącz</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const date_now_utc = new Date().toISOString();
+    let lastChecked = new Date().getTime();
+
+    // Track icons added status for each category
+    const iconsAdded = {};
+
+    setInterval(function() {
+        const now = new Date().getTime();
+        if (now - lastChecked >= 500) {
+            lastChecked = now;
+
+            $.get("/chat/channel/last_messages", function(data) {
+                Object.entries(data.last_messages).forEach(([cid, lastMessageDate]) => {
+                    const elementId = `cid${cid}`;
+                    const element = document.getElementById(elementId);
+
+                    if (!element) {
+                        console.error(`Element with ID ${elementId} not found.`);
+                        return;
+                    }
+
+                    const lastMessageDateTime = new Date(lastMessageDate);
+                    const nowDateTime = new Date(date_now_utc);
+
+                    if (lastMessageDateTime > nowDateTime &&!iconsAdded[cid]) {
+                        console.log(`New message detected for CID ${cid}.`);
+                        iconsAdded[cid] = true; // Mark this category as having an icon
+
+                        const flashIcon = element.querySelector('.flash');
+                        if (flashIcon) {
+                            flashIcon.remove();
+                        }
+
+                        const envelopeIcon = document.createElement('i');
+                        envelopeIcon.className = 'bi bi-envelope fs-3';
+                        envelopeIcon.style.display = 'inline-block';
+                        envelopeIcon.style.marginLeft = '10px';
+
+                        // Function to toggle visibility
+                        function toggleVisibility() {
+                            envelopeIcon.style.opacity = envelopeIcon.style.opacity === '0'? '1' : '0';
+                        }
+
+                        // Start flashing
+                        setInterval(toggleVisibility, 500); // Flash every second (500ms visible, 500ms invisible)
+
+                        element.appendChild(envelopeIcon);
+                    }
+                });
+            });
+        }
+    }, 500);
+});
+</script>
+
+
+
+
+{% endblock %}

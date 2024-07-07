@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Czat</h3>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    [{{ user_login }}] rozmawia z adminem
+                </div>
+
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% for message, user_login, entry_id in initial_messages %}
+                        <li class="mb-2 text-start"><strong>{{ user_login }}:</strong> {{ message }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <script>
+                        $(document).ready(function() {
+                            $('#chat-form').submit(function(e) {
+                                e.preventDefault(); // Prevent the form from submitting via the browser.
+
+                                var formData = $(this).serialize();
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/chat_with_admin/channel/{{ topic_uid }}/new_message",
+                                    data: formData,
+                                    success: function(response) {
+                                        console.log(response);
+                                        $('#message-input').val('');
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.error(textStatus, errorThrown);
+                                    }
+                                });
+                            });
+                        });
+
+                        $(document).ready(function() {
+                        function addChatMessage(user, message) {
+                            var liHtml = '<li class="mb-2 text-start"><strong>' + user + ':</strong> ' + message + '</li>';
+
+                            $('.card-body ul').append(liHtml);
+                        }
+
+                    });
+
+                    </script>
+
+                    <script>
+                        $(document).ready(function() {
+                            // Initialize an array to store all entry_ids
+                            var seenEntryIds = [];
+
+                            {% for message, user_login, entry_id in initial_messages %}
+                            seenEntryIds.push({{ entry_id }});
+                            {% endfor %}
+
+                            // Function to fetch new messages
+                            function fetchNewMessages(topic_uid) {
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/chat_with_admin/channel/" + topic_uid + "/emit",
+                                    dataType: "json",
+                                    success: function(data) {
+                                        if (data && data.new_messages) {
+                                            $.each(data.new_messages, function(index, messageArray) {
+                                                if (messageArray.length > 0) {
+                                                    var user = messageArray[0];
+                                                    var message = messageArray[1];
+                                                    var entryId = messageArray[2];
+
+                                                    // Check if the entry_id is already seen
+                                                    if (!seenEntryIds.includes(entryId)) {
+                                                        // Add the entry_id to the seen array
+                                                        seenEntryIds.push(entryId);
+
+                                                        addChatMessage(user, message);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.error(textStatus, errorThrown);
+                                    }
+                                });
+                            }
+
+                            // Function to add a chat message to the UI
+                            var messageCount = 0;
+
+                            function addChatMessage(user, message) {
+                                messageCount++;
+
+                                // Create a unique ID for the new message based on the message count
+                                var messageId = "message-" + messageCount;
+
+                                var liHtml = '<li class="mb-2 text-start" id="' + messageId + '">' +
+                                             '<strong>' + user + ':</strong> ' + message + '</li>';
+                                $('.card-body ul').append(liHtml);
+
+                                // Append the alert classes
+                                $("#" + messageId).addClass("alert alert-success");
+
+                                // Remove the alert classes after 5 seconds (5000 milliseconds)
+                                setTimeout(function() {
+                                    $("#" + messageId).removeClass("alert alert-success");
+                                }, 5000);
+                            }
+
+                            // Initial call to fetch messages
+                            var topic_uid = "{{ topic_uid }}";
+
+                            // Set up periodic fetching of new messages
+                            setInterval(function() {
+                                fetchNewMessages(topic_uid);
+                            }, 1000);
+                        });
+                    </script>
+
+
+
+                    <form id="chat-form" method="post">
+                        <div class="input-group">
+                            <input name="message" type="text" class="form-control" placeholder="Wpisz wiadomość..."
+                                   aria-label="Message" aria-describedby="button-addon2" id="message-input">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Wyślij
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

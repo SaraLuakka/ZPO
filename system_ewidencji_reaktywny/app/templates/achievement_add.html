@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Dodaj osiągnięcie</h3>
+
+<form method="POST">
+<div class="container">
+ <div class="row">
+ <div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+   <form method="POST">
+     {{ form.hidden_tag() }}
+      {% for field in form %}
+          {% if field.errors %}
+              <div class="alert alert-danger">
+                  {{ field.label }}:
+                  {% for error in field.errors %}
+                     {{ error }}
+                  {% endfor %}
+              </div>
+          {% endif %}
+      {% endfor %}
+     <div class="mb-3">
+       <label for="title" class="form-label">Nazwa osiągniecia</label>
+       {{ form.title(class="form-control", id="title") }}
+     </div>
+     <div class="mb-3">
+       <label for="description" class="form-label">Opis osiągniecia</label>
+       {{ form.description(class="form-control", id="description") }}
+     </div>
+     <div class="mb-3">
+       <label for="start_date" class="form-label">Początek</label>
+       {{ form.start_date(type="date", class="form-control", id="start_date") }}
+     </div>
+     <div class="mb-3">
+       <label for="end_date" class="form-label">Koniec</label>
+       {{ form.end_date(type="date", class="form-control", id="end_date") }}
+     </div>
+     <div class="mb-3">
+       <label for="category" class="form-label">Kategoria</label>
+       {{ form.category(class="form-control", id="category") }}
+     </div>
+     <div class="mb-3">
+       <label for="hashtag" class="form-label">Hashtag</label>
+       {{ form.hashtag(class="form-control", id="hashtag") }}
+     </div>
+
+       {% if current_user.role == "admin" %}
+            <div class="mb-3">
+            <label for="user" class="form-label">Użytkownik</label>
+            {{ form.user(class="form-control", id="user") }}
+            </div>
+       {% endif %}
+
+     <button type="submit" class="btn btn-primary">Dodaj osiągnięcie</button>
+   </form>
+
+    <script>
+    $(document).ready(function(){
+       $('#start_date').change(function(){
+           var startDate = $(this).val();
+           $('#end_date').val(startDate);
+       });
+    });
+    </script>
+
+ </div>
+ </div>
+</div>
+</form>
+
+{% endblock %}

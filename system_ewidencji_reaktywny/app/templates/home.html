@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if current_user.is_authenticated %}
+   Witaj {{ current_user.login }}!
+  {% else %}
+<hr>
+  <p>Przeglądasz jako użytkownik niezalogowany</p>
+  {% endif %}
+{% endblock %}
